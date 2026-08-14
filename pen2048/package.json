@@ -1,0 +1,36 @@
+{
+  "name": "2048双模式",
+  "appid": "8002048151526020",
+  "version": "1.5.0",
+  "description": "2048 双模式小游戏（4×4 / 5×5）",
+  "type": "module",
+  "icon": "app_icon.png",
+  "quickjs": {
+    "version": "20200705",
+    "bigNum": false
+  },
+  "simulator": {
+    "path": "",
+    "page": ""
+  },
+  "single-js-bundle": false,
+  "scripts": {
+    "start": "aiot-cli preview",
+    "build": "aiot-cli -p",
+    "build:dev": "aiot-cli",
+    "build:bin": "aiot-cli -q -p",
+    "build:prod": "aiot-cli -c -q -p",
+    "build:web": "aiot-cli build-web",
+    "check": "aiot-cli check"
+  },
+  "keywords": [
+    "iot",
+    "miniapp",
+    "youdao",
+    "2048",
+    "dictpen"
+  ],
+  "dependencies": {
+    "falcon-ui": "^2.0.2"
+  }
+}
