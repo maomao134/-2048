@@ -2,7 +2,6 @@
   <div class="page">
     <!-- 顶栏（自绘按钮） -->
     <div class="topbar">
-      <div class="tbtn" @click="backToMenu"><text class="tbtn-label">菜单</text></div>
       <div
         v-for="s in sizes"
         :key="s"
@@ -13,14 +12,11 @@
       <div class="topbar-spacer" />
       <text class="topbar-score">得分 {{ activeGame.score }}</text>
       <text class="topbar-score">最佳 {{ best[mode] }}</text>
-      <div class="tbtn" @click="restart"><text class="tbtn-label">重新开始</text></div>
-      <div class="tbtn" @click="openSave"><text class="tbtn-label">存档</text></div>
-      <div class="tbtn" @click="openHelp"><text class="tbtn-label">说明</text></div>
       <!-- 作弊开关框：默认绿✓（未开启），开启后红× -->
       <div class="tbtn cheat-toggle" @click="toggleCheat">
         <text class="tbtn-label">作弊</text>
         <div class="cheat-box" :class="activeGame.cheat ? 'cheat-box-x' : 'cheat-box-ok'">
-          <text class="cheat-mark" :class="activeGame.cheat ? 'cheat-mark-x' : 'cheat-mark-ok'">{{ activeGame.cheat ? '×' : '✓' }}</text>
+          <text class="cheat-mark" :class="activeGame.cheat ? 'cheat-mark-x' : 'cheat-mark-ok'">{{ activeGame.cheat ? ' ' : ' ' }}</text>
         </div>
       </div>
     </div>
@@ -29,7 +25,6 @@
     <div class="body">
       <!-- 棋盘区：滑动控制，作弊时点格子选中 -->
       <div class="board-area" @touchstart="onTouchStart" @touchend="onTouchEnd">
-        <text v-if="overlay !== 'none'" class="board-status">{{ overlay === 'won' ? '达成 2048！' : '游戏结束' }}</text>
         <Board :grid="activeGame.grid" :size="activeGame.size" :sel="activeGame.cheat ? selCell : null" @celltap="onCellTap" />
       </div>
 
@@ -44,15 +39,21 @@
             <div class="val-btn val-clear" @click="clearCell"><text class="val-txt">清空格</text></div>
             <div class="val-btn val-off" @click="toggleCheat"><text class="val-txt">关闭作弊</text></div>
           </div>
-          <text class="control-hint">点棋盘方格选中，再点数字改值</text>
         </div>
-        <DPad v-else-if="overlay === 'none'" @move="doMove" />
+        
         <div v-else class="end-panel">
           <div v-if="overlay === 'won'" class="btn" @click="continueGame"><text class="btn-label">继续挑战</text></div>
-          <div class="btn" @click="restart"><text class="btn-label">再来一局</text></div>
-          <div class="btn btn-plain" @click="backToMenu"><text class="btn-label-plain">回主界面</text></div>
+          <div style="flex-direction: row; align-items: center; justify-content: center; margin-bottom: 4px;">
+            <div class="btn" @click="restart"><text class="btn-label">再来一局</text></div>
+            <div class="btn" @click="restart"><text class="btn-label">重新开始</text></div>
+          </div>
+          <div style="flex-direction: row; align-items: center; justify-content: center; margin-bottom: 4px;">
+            <div class="btn" @click="openSave"><text class="btn-label">存档界面</text></div>
+            <div class="btn btn-plain" @click="backToMenu"><text class="btn-label-plain">标题画面</text></div>
+          </div>
+
         </div>
-        <text v-if="!activeGame.cheat" class="control-hint">滑动棋盘或用方向键</text>
+        <text v-if="overlay !== 'none'" class="board-status">{{ overlay === 'won' ? '达成 2048！' : '游戏结束' }}</text>
       </div>
     </div>
   </div>
@@ -115,18 +116,18 @@ export default {
   methods: {
     onShow() {
       dbgLog('game onShow uid=' + this._uid + ' mode=' + this.mode)
-      loadSave().then(() => {
-        // 恢复完成后从模块源整体重拷贝（含最新存档内容）
-        const st = copyState()
-        this.mode = st.mode
-        this.games = st.games
-        this.best = st.best
-        // 恢复出的棋盘若已无路可走，直接显示结束面板，避免"棋盘不动"的错觉
-        if (this.overlay === 'none' && isGameOver(this.games[this.mode].grid)) {
-          this.overlay = 'over'
-        }
-        dbgLog('game onShow synced mode=' + this.mode + ' score=' + this.games[this.mode].score + ' overlay=' + this.overlay)
-      })
+      // loadSave().then(() => {
+      //   // 恢复完成后从模块源整体重拷贝（含最新存档内容）
+      //   const st = copyState()
+      //   this.mode = st.mode
+      //   this.games = st.games
+      //   this.best = st.best
+      //   // 恢复出的棋盘若已无路可走，直接显示结束面板，避免"棋盘不动"的错觉
+      //   if (this.overlay === 'none' && isGameOver(this.games[this.mode].grid)) {
+      //     this.overlay = 'over'
+      //   }
+      //   dbgLog('game onShow synced mode=' + this.mode + ' score=' + this.games[this.mode].score + ' overlay=' + this.overlay)
+      // })
     },
     switchMode(m) {
       dbgLog('switchMode ' + m)
@@ -308,8 +309,9 @@ export default {
       $falcon.navTo('page')
     },
     openSave() {
-      dbgLog('openSave')
+      dbgLog('openSave, backtomenu')
       $falcon.navTo('save')
+      this.$page.finish()
     },
     onTouchStart(e) {
       const t = touchPoint(e)
@@ -352,6 +354,7 @@ function touchPoint(e) {
 
 <style lang="less" scoped>
 @import '../../styles/colors.less';
+@import '../../styles/bar.less';
 
 .page {
   flex: 1;
@@ -360,21 +363,15 @@ function touchPoint(e) {
   background-color: @bg;
 }
 
-.topbar {
-  height: 40px;
-  flex-direction: row;
-  align-items: center;
-  padding-left: 12px;
-  padding-right: 12px;
-}
+
 
 .tbtn {
-  height: 30px;
-  padding-left: 12px;
-  padding-right: 12px;
-  border-radius: 8px;
+  height: 15vh;
+  padding-left: 6vh;
+  padding-right: 6vh;
+  border-radius: 2vh;
   background-color: @empty;
-  margin-right: 8px;
+  margin-right: 8vh;
   justify-content: center;
   align-items: center;
 }
@@ -388,7 +385,7 @@ function touchPoint(e) {
 }
 
 .tbtn-label {
-  font-size: 14px;
+  font-size: 10vh;
   color: @text-dark;
 }
 
@@ -401,9 +398,10 @@ function touchPoint(e) {
 }
 
 .topbar-score {
-  font-size: 15px;
+  font-size: 14vh;
   color: @text-dark;
-  margin-right: 16px;
+  margin-left: 2vw;
+  margin-right: 2vw;
 }
 
 .body {
@@ -418,22 +416,15 @@ function touchPoint(e) {
 }
 
 .board-status {
-  font-size: 18px;
+  font-size: 10vh;
   font-weight: bold;
   color: @accent;
-  margin-bottom: 6px;
 }
 
 .control-panel {
-  width: 250px;
+  width: 40vw;
   justify-content: center;
   align-items: center;
-}
-
-.control-hint {
-  font-size: 12px;
-  color: @text-dark;
-  margin-top: 6px;
 }
 
 .end-panel {
@@ -442,12 +433,12 @@ function touchPoint(e) {
 }
 
 .btn {
-  height: 44px;
-  padding-left: 20px;
-  padding-right: 20px;
-  border-radius: 10px;
+  height: 16vh;
+  padding-left: 6vh;
+  padding-right: 6vh;
+  border-radius: 2vh;
   background-color: @accent;
-  margin-top: 8px;
+  margin: 2vh;
   justify-content: center;
   align-items: center;
 }
@@ -457,7 +448,7 @@ function touchPoint(e) {
 }
 
 .btn-label {
-  font-size: 16px;
+  font-size: 10vh;
   font-weight: bold;
   color: @text-light;
 }
@@ -467,7 +458,7 @@ function touchPoint(e) {
 }
 
 .btn-label-plain {
-  font-size: 16px;
+  font-size: 10vh;
   font-weight: bold;
   color: @text-dark;
 }
@@ -478,12 +469,12 @@ function touchPoint(e) {
 }
 
 .cheat-box {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border-width: 2px;
+  width: 13vh;
+  height: 13vh;
+  border-radius: 2vh;
+  border-width: 2vh;
   border-style: solid;
-  margin-left: 6px;
+  margin-left: 2vh;
   justify-content: center;
   align-items: center;
 }
@@ -494,10 +485,11 @@ function touchPoint(e) {
 
 .cheat-box-x {
   border-color: #d93025;
+  background-color: #d93025;
 }
 
 .cheat-mark {
-  font-size: 13px;
+  font-size: 10vh;
   font-weight: bold;
 }
 
@@ -516,10 +508,9 @@ function touchPoint(e) {
 }
 
 .cheat-sel {
-  font-size: 13px;
+  font-size: 9vh;
   font-weight: bold;
   color: #d93025;
-  margin-bottom: 4px;
 }
 
 .val-row {
@@ -527,10 +518,10 @@ function touchPoint(e) {
 }
 
 .val-btn {
-  width: 52px;
-  height: 26px;
+  width: 8vw;
+  height: 15vh;
   margin: 3px;
-  border-radius: 6px;
+  border-radius: 2vh;
   background-color: @accent;
   justify-content: center;
   align-items: center;
@@ -541,17 +532,17 @@ function touchPoint(e) {
 }
 
 .val-txt {
-  font-size: 13px;
+  font-size: 10vh;
   color: @text-light;
 }
 
 .val-clear {
-  width: 104px;
+  width: 13vw;
   background-color: #d93025;
 }
 
 .val-off {
-  width: 104px;
+  width: 13vw;
   background-color: @text-dark;
 }
 </style>

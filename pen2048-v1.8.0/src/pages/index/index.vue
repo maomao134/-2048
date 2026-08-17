@@ -52,13 +52,10 @@ export default {
   methods: {
     onShow() {
       dbgLog('index onShow')
-      loadSave().then(() => {
-        // 恢复完成后刷新选中态与最佳成绩显示
-        this.selected = selectedMode
-        for (const s of SIZES) {
-          this.best[s] = storeBest[s]
-        }
-      })
+      // 刷新最佳成绩显示（来自手动读档后的更新）
+      for (const s of SIZES) {
+        this.best[s] = storeBest[s]
+      }
     },
     select(m) {
       dbgLog('select ' + m)
@@ -99,42 +96,41 @@ export default {
 }
 
 .title-zone {
-  height: 76px;
+  height: 30vh;
   flex-direction: row;
   align-items: flex-end;
-  padding-left: 24px;
+  padding-left: 5vw;
 }
 
 .title-main {
-  font-size: 44px;
+  font-size: 25vh;
   font-weight: bold;
   color: @text-dark;
 }
 
 .title-sub {
-  font-size: 20px;
+  font-size: 10vh;
   color: @accent;
-  margin-left: 12px;
-  margin-bottom: 8px;
+  margin-left: 5vw;
 }
 
 .cards-zone {
-  height: 104px;
+  height: 45vh;
   flex-direction: row;
   align-items: center;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 5vw;
+  padding-right: 5vw;
 }
 
 .mode-card {
-  width: 170px;
-  height: 84px;
-  border-radius: 12px;
-  border-width: 3px;
+  width: 20vw;
+  height: 40vh;
+  border-radius: 4vh;
+  border-width: 2px;
   border-style: solid;
   border-color: @board;
   background-color: @empty;
-  margin-right: 14px;
+  margin-right: 2vw;
   align-items: center;
   justify-content: center;
 }
@@ -149,8 +145,7 @@ export default {
 }
 
 .card-mode {
-  font-size: 26px;
-  font-weight: bold;
+  font-size: 18vh;
   color: @text-dark;
 }
 
@@ -159,25 +154,25 @@ export default {
 }
 
 .card-best {
-  font-size: 14px;
+  font-size: 10vh;
   color: @text-dark;
-  margin-top: 2px;
 }
 
 .action-zone {
-  height: 60px;
+  height: 20vh;
   flex-direction: row;
   align-items: center;
-  padding-left: 24px;
+  padding-left: 5vw;
+  margin-top: 2vh;
 }
 
 .btn {
-  height: 44px;
-  padding-left: 22px;
-  padding-right: 22px;
-  border-radius: 10px;
+  height: 20vh;
+  padding-left: 5vw;
+  padding-right: 5vw;
+  border-radius: 3vh;
   background-color: @accent;
-  margin-right: 14px;
+  margin-right: 5vw;
   justify-content: center;
   align-items: center;
 }
@@ -187,7 +182,7 @@ export default {
 }
 
 .btn-label {
-  font-size: 17px;
+  font-size: 10vh;
   font-weight: bold;
   color: @text-light;
 }
@@ -197,7 +192,7 @@ export default {
 }
 
 .btn-label-plain {
-  font-size: 17px;
+  font-size: 10vh;
   font-weight: bold;
   color: @text-dark;
 }

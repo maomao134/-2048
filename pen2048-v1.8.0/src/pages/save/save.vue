@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="topbar">
-      <div class="back-btn" @click="goBack"><text class="back-label">← 返回</text></div>
+      <div class="back-btn" @click="goBack"><text class="back-label">返回</text></div>
       <text class="topbar-title">存档管理</text>
       <text class="topbar-hint">{{ hint }}</text>
     </div>
@@ -11,10 +11,10 @@
       <!-- 自动存档（信息行） -->
       <div class="slot-row">
         <div class="slot-name">
-          <text class="slot-name-text">自动</text>
+          <text class="slot-name-text">当前</text>
         </div>
         <div class="mark-box" :class="autoCheated ? 'mark-box-x' : 'mark-box-ok'">
-          <text class="mark-txt" :class="autoCheated ? 'mark-txt-x' : 'mark-txt-ok'">{{ autoCheated ? '×' : '✓' }}</text>
+          <text class="mark-txt" :class="autoCheated ? 'mark-txt-x' : 'mark-txt-ok'">{{ autoCheated ? ' ' : ' ' }}</text>
         </div>
         <text class="slot-info">{{ autoInfo }}</text>
         <div class="slot-actions">
@@ -29,7 +29,7 @@
         </div>
         <!-- 作弊标记框：绿✓ 存档保存时未开作弊；红× 存档保存时开着作弊 -->
         <div class="mark-box" :class="slot.cheated ? 'mark-box-x' : 'mark-box-ok'">
-          <text class="mark-txt" :class="slot.cheated ? 'mark-txt-x' : 'mark-txt-ok'">{{ slot.cheated ? '×' : '✓' }}</text>
+          <text class="mark-txt" :class="slot.cheated ? 'mark-txt-x' : 'mark-txt-ok'">{{ slot.cheated ? ' ' : ' ' }}</text>
         </div>
         <text class="slot-info">{{ slot.info }}</text>
         <div class="slot-actions">
@@ -40,8 +40,7 @@
 
       <div class="footer">
         <text class="footer-text">读取：用槽位存档替换当前全部棋盘进度</text>
-        <text class="footer-text">保存：把全部棋盘的进度存入槽位；游戏每一步自动更新"自动"存档</text>
-        <text class="footer-text">绿✓ 保存时未开作弊 · 红× 开启作弊后保存的存档</text>
+        <text class="footer-text">保存：把当前全部棋盘的进度存入槽位</text>
       </div>
     </scroller>
   </div>
@@ -69,8 +68,8 @@ export default {
     return {
       slots: [],
       autoCheated: false,
-      autoInfo: '（空）',
-      hint: '绿✓ 未作弊存档 · 红× 作弊存档'
+      autoInfo: '空',
+      hint: '(绿: 未作弊存档 红: 作弊存档)'
     }
   },
   methods: {
@@ -91,7 +90,7 @@ export default {
         auto = null
       }
       this.autoCheated = !!(auto && auto.cheated)
-      this.autoInfo = auto ? this.describe(auto) : '（空）'
+      this.autoInfo = auto ? this.describe(auto) : '空'
 
       const list = []
       for (let n = 1; n <= SLOT_COUNT; n++) {
@@ -106,7 +105,7 @@ export default {
           hasData: !!data,
           /* 存档保存时固化的作弊标记（旧版存档无此字段视为未作弊 ✓） */
           cheated: !!(data && data.cheated),
-          info: data ? this.describe(data) : '（空）'
+          info: data ? this.describe(data) : '空'
         })
       }
       this.slots = list
@@ -115,12 +114,9 @@ export default {
     describe(d) {
       const parts = []
       for (const s of SIZES) {
-        parts.push(s + '×' + s + ' ' + (typeof d['b' + s] === 'number' ? d['b' + s] : '—'))
+        parts.push(s + '×' + s + ':' + (typeof d['b' + s] === 'number' ? d['b' + s] : '—'))
       }
-      let str = parts.join('  ·  ')
-      if (d.savedAt) {
-        str += '  ·  ' + fmtTime(d.savedAt)
-      }
+      let str = parts.join(' ')
       return str
     },
     async readSlot(n) {
@@ -145,6 +141,7 @@ export default {
 
 <style lang="less" scoped>
 @import '../../styles/colors.less';
+@import '../../styles/bar.less';
 
 .page {
   flex: 1;
@@ -153,96 +150,67 @@ export default {
   background-color: @bg;
 }
 
-.topbar {
-  height: 40px;
-  flex-direction: row;
-  align-items: center;
-  padding-left: 12px;
-  padding-right: 12px;
-}
-
-.back-btn {
-  height: 30px;
-  padding-left: 12px;
-  padding-right: 12px;
-  border-radius: 8px;
-  background-color: @accent;
-  margin-right: 14px;
-  justify-content: center;
-  align-items: center;
-}
-
-.back-btn:active {
-  opacity: 0.6;
-}
-
-.back-label {
-  font-size: 14px;
-  color: @text-light;
-}
-
-.topbar-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: @text-dark;
-}
 
 .topbar-hint {
-  font-size: 13px;
-  color: @accent;
-  margin-left: 18px;
+  font-size: 12vh;
+  line-height: 15vh;
+  font-weight: bold;
+  color: #baac9d;
+  margin-right: 10vw;
 }
 
 .list {
   width: 100%;
-  height: 200px;
+  height: 80vh;
 }
 
 .slot-row {
-  height: 46px;
+  height: 30vh;
   flex-direction: row;
   align-items: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-top: 4px;
-  border-radius: 10px;
+  padding-left: 4vh;
+  padding-right: 5vh;
+  margin-left: 4vh;
+  margin-right: 4vh;
+  margin-top: 2vh;
+  border-radius: 5vh;
   background-color: #eee4da;
 }
 
 .slot-name {
-  width: 70px;
+  width: 15vw;
 }
 
 .slot-name-text {
-  font-size: 16px;
+  font-size: 15vh;
   font-weight: bold;
   color: @text-dark;
 }
 
-/* 作弊标记框（绿✓ 正常存档 / 红× 作弊存档） */
+/* 作弊标记框（绿: 正常存档 / 红: 作弊存档） */
 .mark-box {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  border-width: 2px;
+  width: 20vh;
+  height: 20vh;
+  border-radius: 2vh;
+  border-width: 4vh;
   border-style: solid;
-  margin-right: 10px;
+  margin-right: 5vh;
   justify-content: center;
   align-items: center;
 }
 
 .mark-box-ok {
   border-color: #2e9e44;
+  background-color: #2e9e44;
 }
 
 .mark-box-x {
   border-color: #d93025;
+  background-color: #d93025;
 }
 
 .mark-txt {
-  font-size: 13px;
+  font-size: 5vh;
   font-weight: bold;
 }
 
@@ -256,29 +224,30 @@ export default {
 
 .slot-info {
   flex: 1;
-  font-size: 12px;
+  font-size: 10vh;
   color: @text-dark;
 }
 
 .slot-actions {
-  width: 170px;
+  width: auto;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
 }
 
 .auto-note {
-  font-size: 12px;
+  font-size: 10vh;
   color: #888888;
 }
 
 .btn {
-  height: 32px;
-  padding-left: 14px;
-  padding-right: 14px;
-  border-radius: 8px;
+  height: 25vh;
+  width: auto;
+  padding-left: 4vh;
+  padding-right: 4vh;
+  border-radius: 5vh;
   background-color: @accent;
-  margin-left: 8px;
+  margin-left: 4vh;
   justify-content: center;
   align-items: center;
 }
@@ -288,20 +257,20 @@ export default {
 }
 
 .btn-label {
-  font-size: 14px;
+  font-size: 10vh;
   font-weight: bold;
   color: @text-light;
 }
 
 .btn-plain {
   background-color: #ffffff;
-  border-width: 2px;
+  border-width: 5px;
   border-style: solid;
   border-color: @accent;
 }
 
 .btn-label-plain {
-  font-size: 14px;
+  font-size: 10vh;
   font-weight: bold;
   color: @accent;
 }
@@ -311,14 +280,15 @@ export default {
 }
 
 .footer {
-  padding-left: 20px;
-  padding-top: 8px;
-  padding-bottom: 6px;
+  align-self: center;
+  padding-top: 4vh;
+  padding-bottom: 4vh;
 }
 
 .footer-text {
-  font-size: 12px;
+  align-self: center;
+  font-size: 10vh;
   color: #888888;
-  margin-bottom: 2px;
+  margin-bottom: 4vh;
 }
 </style>
