@@ -1,4 +1,6 @@
 import { BasePage } from './base-page.js'
+import { initializeSave } from './utils/state.js'
+
 class App extends $falcon.App {
   /**
    * 构造函数,应用生命周期内只构造一次
@@ -22,6 +24,9 @@ class App extends $falcon.App {
     // 继承自$falcon.Page的页面将继承自改基类.
     // 如页面未指定js,直接指向.vue文件,页面创建时会默认创建该类的实例
     $falcon.useDefaultBasePageClass(BasePage)
+
+    // 初始化 storage 中的存档为初始状态（每次启动都是新棋盘）
+    initializeSave()
   }
 
   /**

@@ -195,3 +195,12 @@ export async function loadFromSlot(n) {
   }
   return ok
 }
+
+/**
+ * 应用启动时调用：初始化 storage 中的自动存档为初始状态（所有最佳分数为 0）。
+ * 这确保即使之前保存过游戏进度，重启应用后存档管理页面也显示初始状态。
+ */
+export function initializeSave() {
+  saveLoaded = true
+  saveGame()
+}
