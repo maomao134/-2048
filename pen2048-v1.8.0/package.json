@@ -1,7 +1,7 @@
 {
   "name": "2048",
   "appid": "8002048151526020",
-  "version": "1.8.0",
+  "version": "2.0.1",
   "description": "2048 小游戏（3×3~6×6 自定义大小 + 作弊模式）",
   "type": "module",
   "icon": "app_icon.png",
