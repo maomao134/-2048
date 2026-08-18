@@ -1,0 +1,17 @@
+{
+  "pages": {
+    "index": "pages/index/index.vue",
+    "game": "pages/game/game.vue",
+    "save": "pages/save/save.vue",
+    "settings": "pages/settings/settings.vue",
+    "page": "pages/page/page.vue",
+    "about": "pages/about/about.vue"
+  },
+  "options": {
+    "style": {
+      "lessPaths": [
+        "styles"
+      ]
+    }
+  }
+}
