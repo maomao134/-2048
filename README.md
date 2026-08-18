@@ -1,5 +1,5 @@
 # 2048
-就是个2048的amr包，代码--GMM (Deepseek) UI--qq1122
+就是个2048的amr包，代码--GMM (使用Deepseek-v4-pro,deepseek-v4-flash) UI--qq1122
 ----------
 注意：1.3.1版本以后才可以正常运行  
 适配有道词典笔(全系列)  
